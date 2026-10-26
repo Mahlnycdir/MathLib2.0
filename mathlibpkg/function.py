@@ -13,6 +13,7 @@ class Function:
         self.x_array = x_array
         self.y_array = y_array
 
+
     def __call__(self, x):
         try:     
             return self.y_array[self.x_array.index(x)]
@@ -33,7 +34,12 @@ class Function:
                     x_max = self.x_array[i]
                     y_max = self.y_array[i]
                     break
-
+            
+            for val in [x_min, x_max, y_min, y_max]:
+                if val is None:
+                    raise ValueError("No proper Value was found!")
+   
+         
             slope = (y_max - y_min)/(x_max - x_min)
             
             return (slope * (x - x_max)) + y_max

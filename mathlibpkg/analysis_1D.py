@@ -1,10 +1,14 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 
-class ODGL:
+from random import uniform
 
+class ODGL:
+    """
+    This class is a collection of methods, solving ordinary differential euqations. 
+    """
     @staticmethod
-    def RungeKutta(func_2D, h = 0.01, N = 100, y_zero=0, t_zero=0) -> (list,list):
+    def RungeKutta(func_2D, h = 0.01, N = 100, y_zero=0, t_zero=0):
         """
         dy/dt = f(t, y)
         """
@@ -26,15 +30,15 @@ class ODGL:
         return t_list, y_list
         
 
-class Integral:
+class Integral1D:
     """
-    A collection of different integral methods and helpful 
+    A collection of different integral (1D) methods and helpful 
     methods to plot and calculate. 
     """
     @staticmethod
-    def simple(func_1D, x_min, x_max, N = 100) -> float:
+    def simple(func_1D, x_min, x_max, N = 100):
         """
-        Just a simple integral calculator for 1D functions. 
+        Just a simple Integral1D calculator for 1D functions. 
         Nothing special. 
         """
         if x_max < x_min:
@@ -51,7 +55,7 @@ class Integral:
 
 
     @staticmethod
-    def improper_integral(func_1D, N, interval=[0.0, 1.0]) -> (list, list):
+    def improper_integral(func_1D, N_interval, interval=[0.0, 1.0]):
         """
         F(t,y) == F(t) = dy/dt -> F(t) is the function integrated over.
         y is the solution array. 
@@ -78,7 +82,7 @@ class Integral:
                 if step is not None: 
                     t_0 = step[0][len(step[0]) - 1]
                     y_0 = step[1][len(step[1]) - 1]
-                step = ODGL.RungeKutta(func_1D, h=np.abs(inval[1]-inval[0])/N, N=N, y_zero=y_0, t_zero=t_0)
+                step = ODGL.RungeKutta(func_1D, h=np.abs(inval[1]-inval[0])/N_interval, N=N_interval, y_zero=y_0, t_zero=t_0)
                 x_list.append(step[0])
                 y_list.append(step[1])
 
@@ -89,4 +93,29 @@ class Integral:
                 
             return x_list, y_list   
 
-        return ODGL.RungeKutta(func_1D, h=np.abs(interval[1]-interval[0])/N, N=N, y_zero=func_1D(interval[0], 0), t_zero=interval[0])
+        return ODGL.RungeKutta(func_1D, h=np.abs(interval[1]-interval[0])/N_interval, N=N_interval, y_zero=func_1D(interval[0], 0), t_zero=interval[0])
+    
+    
+    @staticmethod
+    def monte_carlo_integral(func1D, N_samples, interval_x, interval_y):
+        """
+        A point is given by p = (uniform(x_Min, x_Max, N), np.uniform(x_Min, x_Max, N)). Hence we define the points as matrix P[i][j], but we are only interested in
+        the diagonal. 
+
+        Args:
+            func1D (funcObj): A function depending on one varaibale.
+            N_samples (int): Number of samples (points).
+            interval_x (list): The interval, limiting the creation of x values onto this interval.
+            interval_y (list): The interval, limiting the creation of y values onto this interval.
+        """
+        false_points = 0
+        right_points = 0
+        
+        for i in range(N_samples):
+            point = (uniform(interval_x[0], interval_x[1]), uniform(interval_y[0], interval_y[1]))
+            if point[1] > func1D(point[0]):
+                false_points += 1
+            else:
+                right_points += 1
+            
+        return (interval_x[1] - interval_x[0]) * (interval_y[1] - interval_y[0]) * right_points / N_samples +interval_y[0] * (interval_x[1] - interval_x[0])
