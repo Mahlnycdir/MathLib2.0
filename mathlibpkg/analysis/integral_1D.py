@@ -1,33 +1,9 @@
 import numpy as np 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+
+from mathlibpkg.analysis.ordinary_dgl import ODGL
 
 from random import uniform
-
-class ODGL:
-    """
-    This class is a collection of methods, solving ordinary differential euqations. 
-    """
-    @staticmethod
-    def RungeKutta(func_2D, h = 0.01, N = 100, y_zero=0, t_zero=0):
-        """
-        dy/dt = f(t, y)
-        """
-        y_list = []
-        t_list = []
-
-        y_list.append(y_zero)
-        t_list.append(t_zero)
-
-        for i in range(1, N):
-            k1 = func_2D(t_list[i-1],y_list[i-1])
-            k2 = func_2D(t_list[i-1]+(h/2),y_list[i-1]+(k1*(h/2)))
-            k3 = func_2D(t_list[i-1]+(h/2),y_list[i-1]+(k2*(h/2)))
-            k4 = func_2D(t_list[i-1]+h,y_list[i-1]+k3*h)
-            
-            y_list.append(y_list[i-1] + ((h/6) *(k1 + 2*k2 + 2*k3 + k4)))
-            t_list.append(t_list[i-1] + h)
-
-        return t_list, y_list
         
 
 class Integral1D:
@@ -82,7 +58,7 @@ class Integral1D:
                 if step is not None: 
                     t_0 = step[0][len(step[0]) - 1]
                     y_0 = step[1][len(step[1]) - 1]
-                step = ODGL.RungeKutta(func_1D, h=np.abs(inval[1]-inval[0])/N_interval, N=N_interval, y_zero=y_0, t_zero=t_0)
+                step = ODGL.RK4(func_1D, h=np.abs(inval[1]-inval[0])/N_interval, N=N_interval, y_zero=y_0, t_zero=t_0)
                 x_list.append(step[0])
                 y_list.append(step[1])
 
@@ -93,7 +69,7 @@ class Integral1D:
                 
             return x_list, y_list   
 
-        return ODGL.RungeKutta(func_1D, h=np.abs(interval[1]-interval[0])/N_interval, N=N_interval, y_zero=func_1D(interval[0], 0), t_zero=interval[0])
+        return ODGL.RK4(func_1D, h=np.abs(interval[1]-interval[0])/N_interval, N=N_interval, y_zero=func_1D(interval[0], 0), t_zero=interval[0])
     
     
     @staticmethod
@@ -118,4 +94,4 @@ class Integral1D:
             else:
                 right_points += 1
             
-        return (interval_x[1] - interval_x[0]) * (interval_y[1] - interval_y[0]) * right_points / N_samples +interval_y[0] * (interval_x[1] - interval_x[0])
+        return (interval_x[1] - interval_x[0]) * (interval_y[1] - interval_y[0]) * right_points / N_samples + interval_y[0] * (interval_x[1] - interval_x[0])
