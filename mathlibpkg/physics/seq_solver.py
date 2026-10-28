@@ -130,5 +130,3 @@ class SEQ_1D:
         """
         if self.energy_spectrum is None:
             self.calculate_energy_spectrum()
-        
-        
