@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import datetime
 
 class SEQ_1D:
     """
@@ -120,13 +122,60 @@ class SEQ_1D:
             self.calculate_energy_spectrum()
     
     
-    def plot_energy_spectrum_convergence(self, n_max = 3, N_array = [10,50,100,500,1000]):
+    def energy_spectrum_convergence(self, 
+                                    n_max = 3, 
+                                    N_array = [10,50,100,500,1000], 
+                                    show_plot = True,
+                                    save_figure = False,
+                                    file_type = "pdf",
+                                    file_name = f"en_spec_con_{datetime.datetime.now()}"):          
         """
-        Generates plots for the energy convergence until the n_max 
-        energy band.
+        Convergence simulation of the model for different values of N in `N_array` and plots
+        to the convergence for the 0,...,`n_max` energy values.
 
         Args:
-            n_max (_type_): Maximum plotted energy band.
+            n_max (int, optional): Maximum energy band. Defaults to 3.
+            N_array (list, optional): Array of numbers of lattice points. Defaults to [10,50,100,500,1000].
+
+        Returns:
+            list: All energy convergences from the calculations.
         """
-        if self.energy_spectrum is None:
-            self.calculate_energy_spectrum()
+        sims = [SEQ_1D(potential=self.potential, N=N_val, a=self.a, x0=self.x0) for N_val in N_array]
+        e_spectrum =[sim.calculate_energy_spectrum() for sim in sims]
+        e_spectra_nmax = [e_band[:n_max] for e_band in e_spectrum]         # approx. [0.5, 1.5, 2.5] (only the eigenvalues of n=0,1,2)
+        
+        # nearly square grid with enough cells for all n_max bands
+        n_cols = int(np.ceil(np.sqrt(n_max)))
+        n_rows = int(np.ceil(n_max / n_cols))
+        fig, axes = plt.subplots(n_rows, n_cols, sharex=True, squeeze=False,
+                                 figsize=(4 * n_cols, 3 * n_rows))
+        axes = axes.flatten()
+
+        for j in range(n_max):
+            e_n = [e_spectra_nmax[i][j] for i in range(len(N_array))]
+            axes[j].plot(N_array, e_n, marker="o", label=r"$E_{conv} = $" + f"{e_n[-1]:.4f}")
+            axes[j].set_title(f"Convergence for n = {j}")
+            axes[j].set_xscale("log")
+            axes[j].legend()
+            axes[j].grid()
+
+        # hide the unused cells of the grid
+        for ax in axes[n_max:]:
+            ax.set_visible(False)
+
+        # x-labels on the lowest visible plot of every column
+        for ax in axes[max(n_max - n_cols, 0):n_max]:
+            ax.xaxis.set_tick_params(labelbottom=True)
+            ax.set_xlabel("N")
+        for ax in axes[::n_cols]:
+            ax.set_ylabel("E")
+
+        fig.tight_layout()
+        
+        if save_figure:
+            plt.savefig(file_name + "." + file_type)
+        
+        if show_plot:
+            plt.show()
+        
+        return e_spectrum
