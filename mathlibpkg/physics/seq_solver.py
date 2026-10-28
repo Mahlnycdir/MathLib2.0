@@ -71,6 +71,7 @@ class SEQ_1D:
         self.a = a              
         self.x0 = x0           
         self.hbar = hbar 
+        self.energy_spectrum = None
         
         # setting up the Hamiltonian
         self.build_hamiltonian()
@@ -104,13 +105,30 @@ class SEQ_1D:
        print(self.hamiltonian)
        
     
-    def energy_spectrum(self):
+    def calculate_energy_spectrum(self):
         """
-        Returns the eigen value spectrum of the set up Hamiltonian. This is the simple 
-        solution of the stationary Schroedinger equation H psi = E psi
+        Calculates the eigenvalue spectrum of the set up Hamiltonian. This is the simple 
+        solution of the stationary Schroedinger equation H psi = E psi. It's stored class wide
+        in `self.energy_spectrum`.
+        """            
+        self.energy_spectrum = np.linalg.eigvalsh(self.hamiltonian)
+        return self.energy_spectrum
+    
+    
+    def plot_energy_spectrum(self, n_max = 3):
+        if self.energy_spectrum is None:
+            self.calculate_energy_spectrum()
+    
+    
+    def plot_energy_spectrum_convergence(self, n_max = 3, N_array = [10,50,100,500,1000]):
+        """
+        Generates plots for the energy convergence until the n_max 
+        energy band.
 
-        Returns:
-            NDarray: Array of the eigenvalues of H
+        Args:
+            n_max (_type_): Maximum plotted energy band.
         """
-                
-        return np.linalg.eigvalsh(self.hamiltonian)
+        if self.energy_spectrum is None:
+            self.calculate_energy_spectrum()
+        
+        
