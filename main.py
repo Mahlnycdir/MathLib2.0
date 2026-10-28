@@ -31,7 +31,8 @@ if __name__ == "__main__":
     # equ.show_hamiltonian()
 
     sim = SEQ_1D(potential=lambda x: 0.5 * x**2, N=1000, a=0.01, x0=-5.0)
+    print(sim.plot_eigvec())
     # sim.show_hamiltonian() 
     
-    e_bands = sim.energy_spectrum_convergence(save_figure=True)
+    # e_bands = sim.energy_spectrum_convergence()
     
