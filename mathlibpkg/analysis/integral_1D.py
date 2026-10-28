@@ -76,7 +76,7 @@ class Integral1D:
     def monte_carlo_integral(func1D, N_samples, interval_x, interval_y):
         """
         A point is given by p = (uniform(x_Min, x_Max, N), np.uniform(x_Min, x_Max, N)). Hence we define the points as matrix P[i][j], but we are only interested in
-        the diagonal. 
+        the diagonal. For now only for positive functions!
 
         Args:
             func1D (funcObj): A function depending on one varaibale.
