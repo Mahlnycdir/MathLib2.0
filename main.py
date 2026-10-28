@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from mathlibpkg.analysis.integral_1D import Integral1D
 from mathlibpkg.analysis.ordinary_dgl import ODGL
 from mathlibpkg.analysis.function import Function
-
 from mathlibpkg.physics.seq_solver import SEQ_1D
+from mathlibpkg.physics import qcs
 
 def func(t, *args):
     return 2*t
@@ -30,9 +30,13 @@ if __name__ == "__main__":
 # 
     # equ.show_hamiltonian()
 
-    sim = SEQ_1D(potential=lambda x: 0.5 * x**2, N=1000, a=0.01, x0=-5.0)
-    print(sim.plot_eigvec())
+    # sim = SEQ_1D(potential=lambda x: 0.5 * x**2, N=1000, a=0.01, x0=-5.0)
+    # print(sim.plot_eigvec())
     # sim.show_hamiltonian() 
     
     # e_bands = sim.energy_spectrum_convergence()
+    system = qcs.core.QubitSystem(5)
+    circuit = qcs.circuits.QubitCircuits(system)
+    circuit.bures_random_state()
+    print(system.density_matrix)
     

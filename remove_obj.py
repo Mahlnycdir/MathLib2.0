@@ -10,7 +10,10 @@ def print_progress(done, total, width=20):
     sys.stdout.flush()
 
 
-def remove_obj(dir_path = None, dir_to_remove = None, exceptions = [], type = "dir"):
+def remove_obj(dir_path = None, 
+               dir_to_remove = None, 
+               exceptions = [], 
+               type = "dir"):
     """
     Removes a file/directory in the given path and in all other subdirectories. If no path is 
     given, the current directory of the script is considered. 
